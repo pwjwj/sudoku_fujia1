@@ -48,7 +48,7 @@ bool valid( const int hang, const int lie, const int &num) {
     }
     return true;
 }
-bool go_next = false;
+
 
 bool shengcheng( int hang, int lie, const QSet<int> &shu) {
     QSet<int> houxuan_number(shu);
@@ -85,10 +85,8 @@ bool shengcheng( int hang, int lie, const QSet<int> &shu) {
             {
                 lie++;
             }
-            go_next = shengcheng( hang, lie, shu);
-            //这时候看上一个是否还有houxuan_number的数据  有的话再次while
-            //如果匹配成功 那么 就会进行下一个的查找
-            if (go_next == true) {
+          
+            if (shengcheng( hang, lie, shu) == true) {
                 //在最后一个返回true时 由于记录了这个返回值 在这里就会一直往回返true
                 return true;
             }
