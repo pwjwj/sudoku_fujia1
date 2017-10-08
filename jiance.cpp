@@ -9,11 +9,11 @@ jiance::jiance(QTableWidget *table,shudu* su)
 {
     table_self=table;
     shu=su;
-    for(int i=0;i<9;i++){
-        for(int j=0;j<9;j++){
-            qDebug()<<table_self->item(i,j)->text().toInt();
-        }
-    }
+    //for(int i=0;i<9;i++){
+       // for(int j=0;j<9;j++){
+           // qDebug()<<table_self->item(i,j)->text().toInt();
+       // }
+    //}
 }
 
 bool valid( const int hang, const int lie, const int &num,QTableWidget *tab ) {
