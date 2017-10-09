@@ -48,63 +48,81 @@ bool valid( const int hang, const int lie, const int &num) {
     }
     return true;
 }
+//QVector<QVector<int>> &shuju,
+bool shengcheng(const QSet<int> &shu) {
 
-
-bool shengcheng( int hang, int lie, const QSet<int> &shu) {
+    int hang(0), lie(0), suiji_number(0);
+    QVector<QSet<int>> zancun;
     QSet<int> houxuan_number(shu);
-    int suiji_number(0);
-    //填充
-    while (!houxuan_number.empty()) {
-        suiji_number = Random(9) + 1;
-        //qDebug() << "suiji_number " << suiji_number<<endl;
-        auto itear = houxuan_number.find(suiji_number);
-        if (itear != houxuan_number.end()) {
-            //不是end 说明这个数据在QSet中是存在的
-            houxuan_number.erase(itear);
-        }
-        else
-        {
-            //随机找到的这个数是不存在在QSet中的数字
-            continue;
-        }
-        if (valid( hang, lie, suiji_number)) {
-            //验证通过了再进行写入
-           // shuju.at(hang).at(lie) = suiji_number
-            shuju[hang][lie]=suiji_number;
-            //之后 移动行、列  准备接收新的东西
-            if (hang == 8 && lie == 8) {
-                //已经接收完毕
-                return true;
+    while (hang < 9) {
+        while (lie < 9) {
+
+            while (!houxuan_number.empty()) {
+                suiji_number = Random(9) + 1;
+                //cout << "suiji_number " << suiji_number<<endl;
+                auto itear = houxuan_number.find(suiji_number);
+                if (itear != houxuan_number.end()) {
+                    //不是end 说明这个数据在set中是存在的
+                    houxuan_number.erase(itear);
+                }
+                else
+                {
+                    //随机找到的这个数是不存在在set中的数字
+                    continue;
+                }
+                //已经生成了随机数
+                if (valid(hang, lie, suiji_number)) {
+                    //如果成功了 将shuju的i,j置为当前的数
+                    shuju[hang][lie] = suiji_number;
+                    //之后 移动行、列  准备接收新的东西
+                    if (hang == 8 && lie == 8) {
+                        //已经接收完毕
+                        return true;
+                    }
+                    if (lie == 8 && hang < 8)
+                    {
+                        lie = 0;
+                        hang++;
+
+                    }
+                    else
+                    {
+                        lie++;
+
+                    }
+                    zancun.push_back(houxuan_number);
+                    houxuan_number = shu;
+                    break;//跳出找随机数的循环
+                }
+                else
+                {
+                    continue;
+                }
             }
-            if (lie == 8 && hang < 8)
-            {
-                lie = 0;
-                hang++;
-            }
-            else
-            {
-                lie++;
-            }
-          
-            if (shengcheng( hang, lie, shu) == true) {
-                //在最后一个返回true时 由于记录了这个返回值 在这里就会一直往回返true
-                return true;
+            if (houxuan_number.empty()) {
+                //如果候选的number为空了  那么 进行回溯
+                shuju[hang][lie] = 0;//将当前位置置零
+                if (lie > 0 && lie <= 8) {
+                    lie--;
+                }
+                if(lie==0 && hang>0)
+                {
+                    lie = 8;
+                    hang--;
+                }
+                if (lie==0 && hang==0) {
+                    qDebug() << "没有结果" << endl;
+                    return false;
+                }
+                auto iend = zancun.end();
+                houxuan_number = *(iend - 1);
+                zancun.pop_back();
             }
         }
-        else
-        {
-            //如果没通过  在当前行 当前列下  接着试探下一个
-            continue;
-        }
-    }
-    //所有的1-9都试探完了 还没找到位置 那就先随便给一个值
-    if (houxuan_number.empty()) {
-        shuju[hang][lie] = 0;
-        return false;
     }
 
 }
-//QVector<QVector<int>> &shuju
+
 void print() {
 
     int sizeofshuju = shuju.size();
@@ -157,8 +175,6 @@ void gongge_wakong(int i, int j) {
                 continue;
             }
         }
-
-
     }
 
 }
@@ -183,9 +199,6 @@ void wakong() {
     }
 }
 
-
-
-
 shudu::shudu()
 {
 
@@ -196,7 +209,7 @@ shudu::shudu()
     }
 
 
-    if (shengcheng( 0, 0, shu)) {
+    if (shengcheng(shu)) {
         print();
         //QVector<QVector<int>> shuju_zhongpan(shuju);
         //此时已经生成算法调用完成 接下来就是挖空
